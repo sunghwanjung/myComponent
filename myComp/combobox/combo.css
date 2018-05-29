@@ -48,6 +48,11 @@
 	font-size: 15px;
 	min-width: 100%;
 }
+
+.xg-combo-item-span{
+	margin: 0 0 25px 25px;
+}
+
 .xg-combo-item-selected{
 	background-color: #F5ECCE;
 }
