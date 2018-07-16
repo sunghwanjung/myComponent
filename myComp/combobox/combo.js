@@ -23,14 +23,18 @@ function xgCombo(element, options) {
     maxWidth: 0,
     valueParam: "value",
     displayParam: "text",
-    codeParam: "value",
     index: null,
     autoWidth: true,
     autoHeight: true,
     multipleItem : false,
     multiItemTextOrder : null,
-    index : -1
+    index : -1,
+    triggerEvent : true //val 함수로 set을 할 때 이벤트를 일으킬 지 정하는 옵션
   };
+
+  var innerOptions = {
+    events : ['change', 'select', 'checkChange', 'listOpened', 'listClosed']
+  }
 
   if (options != null) {
     var keys = Object.keys(options);
@@ -56,13 +60,15 @@ function xgCombo(element, options) {
     if (xgComboProp.combolist.attr("status") == "show") return;
 
     if (!xgComboProp.listBoxRendered) {//item이 렌더링되지 않았을 시 렌더링한다
-      xgComboProp.creatItems();
-      xgComboProp.listBoxRendered = true;
+      xgComboProp.createItems();
+      if(xgComboProp.nowSelectedTarget != null)
+        _addClassToSelectedItem(_getEleByIndex(xgComboProp.index));//선택된 엘리먼트에 클래스 추가
     }
 
     xgComboProp.combolist.attr("status", "show");
-    xgComboProp.combolist.slideDown(200);
-    xgComboProp.host.trigger("listOpened");
+    xgComboProp.comboitems.css("overflow","hidden");
+    xgComboProp.combolist.slideDown(200, function(){ xgComboProp.comboitems.css("overflow","auto"); });
+    xgComboProp.host.trigger(innerOptions.events[3]);
   }
 
   //콤보 리스트박스를 숨기는 함수
@@ -70,12 +76,13 @@ function xgCombo(element, options) {
     if (xgComboProp.combolist.attr("status") == "hide") return;
 
     xgComboProp.combolist.attr("status", "hide");
+    xgComboProp.comboitems.css("overflow","hidden");
     xgComboProp.combolist.slideUp(200);
-    xgComboProp.host.trigger("listClosed");
+    xgComboProp.host.trigger(innerOptions.events[4]);
   }
 
   //array로 담겨온 source를 참조해서 리스트박스 아이템을 추가하는 함수
-  xgComboProp.creatItems = function (source) {
+  xgComboProp.createItems = function (source) {
     if (source == null) {
       source = xgComboProp.source;
     } else {
@@ -87,6 +94,7 @@ function xgCombo(element, options) {
     xgComboProp.comboitems.html("").append(item);
     xgComboProp.setMaxWidthFromItems();
     xgComboProp.setSize();
+    xgComboProp.listBoxRendered = true;
   }
 
   //단일로 담겨온 source를 참조해서  리스트박스의 특정 인덱스에 아이템을 추가하는 함수
@@ -141,6 +149,7 @@ function xgCombo(element, options) {
 
     span.remove();
 
+    /*item 하나에 하나의 텍스트 이상을 사용할 경우*/
     function _getMultiHtmlText(){
       if (source.constructor == Array) {
         for (var i = 0, len = source.length; i < len; i++) {
@@ -161,9 +170,9 @@ function xgCombo(element, options) {
         var inputText = !xgComboProp.checkBoxes ? '' : '<input type="checkbox">'; //체크박스가 true일 경우와 false일 경우 처리
         for (var i = 0, len = source.length; i < len; i++) {
           var nowSource = source[i];
-          result += '<li class="xg-combo-item" style="width : '  + 
-                    _getWidth(nowSource[displayParam]) + 'px;">' + 
-                    inputText + 
+          result += '<li class="xg-combo-item" style="width : '  +
+                    _getWidth(nowSource[displayParam]) + 'px;">' +
+                    inputText +
                     nowSource[displayParam] + '</li>';
         }
       } else if (source.constructor == Object) {
@@ -212,7 +221,7 @@ function xgCombo(element, options) {
     }
 
     if (xgComboProp.autoHeight) {
-
+      //Todo autoHeight 일때 로직 구현하기
     }
   }
 
@@ -221,8 +230,27 @@ function xgCombo(element, options) {
     if(value == null){ //get
       return prop.source[prop.index][prop.valueParam];
     }else{ //set
-
+      var index = xgComboProp.getIndexByValue(value);
+      xgComboProp.setIndex(index);
     }
+  }
+
+  xgComboProp.setIndex = function(index){
+    var oldIndex = xgComboProp.index;
+    if(index == oldIndex) return;
+
+    var selectedValue = xgComboProp.getText(index);
+    xgComboProp.comboinput[0].value = selectedValue;
+    _setIndex(index);
+    _addClassToSelectedItem(_getEleByIndex(index));//선택된 엘리먼트에 클래스 추가
+
+    if(xgComboProp.triggerEvent){
+      var event = $.Event(innerOptions.events[0]);
+      event.args = {oldIndex : oldIndex, newIndex : index};
+
+      xgComboProp.host.trigger(event);
+    }
+    //Todo setIndex 이후 로직 만들어야 함
   }
 
   xgComboProp.getValueByIndex = function (index) {
@@ -252,10 +280,11 @@ function xgCombo(element, options) {
     return result;
   }
 
-  xgComboProp.getValue = function (value) {
-    return xgComboProp.getValueByType(value, xgComboProp.valueParam);
-  }
+   xgComboProp.getValue = function (index) {
+     return xgComboProp.getValueByType(index, xgComboProp.valueParam);
+   }
 
+  //value는 index 또는 value 값
   xgComboProp.getText = function (value) {
     return xgComboProp.getValueByType(value, xgComboProp.displayParam);
   }
@@ -293,6 +322,14 @@ function xgCombo(element, options) {
     return i;
   }
 
+  xgComboProp.getIndexByValue = function (value) {
+    var source = xgComboProp.source;
+    var valuePram = xgComboProp.valueParam;
+    for(var i = 0, len = source.length; i < len; i++){
+      if(source[i][valuePram] == value) return i;
+    }
+  }
+
   xgComboProp.destroy = function () {
     var element = xgComboProp.host;
     element.unbind();
@@ -311,24 +348,24 @@ function xgCombo(element, options) {
   //내부에서 사용하는 함수
 
   //엘리먼트에 이벤트를 추가하는 함수
-  function addEvent() {
-    xgComboProp.host.on("focusout", function () {
+  function _addEvent() {
+    xgComboProp.combolist.on("focusout", function () {
       xgComboProp.hidelist();
     });
 
     xgComboProp.lsitbutton.on("click", function () {
       var status = xgComboProp.combolist.attr("status");
       if (status == "hide") {
-        xgComboProp.showlist()
+        xgComboProp.showlist();
       } else if (status == "show") {
-        xgComboProp.hidelist()
+        xgComboProp.hidelist();
       }
     });
 
     //comboitems를 클릭 시 값을 세팅하거나 선택 클래스를 추가하거나 제거하는 이벤트
     xgComboProp.comboitems.on("click", function (evt) {
       var target = _getLiParent(evt.target);
-      var index; 
+      var index;
       function _getLiParent(target){
         if(target.tagName != "LI"){
           return _getLiParent(target.parentElement);
@@ -349,12 +386,9 @@ function xgCombo(element, options) {
         xgComboProp.comboinput[0].value = selectedValue;
         xgComboProp.hidelist();
 
-        if (xgComboProp.nowClickedTarget != null) {
-          xgComboProp.nowClickedTarget.removeClass("xg-combo-item-selected");
-        }
-        xgComboProp.nowClickedTarget = $(target).addClass("xg-combo-item-selected");
+        _addClassToSelectedItem($(target));
 
-        var event = $.Event("select");
+        var event = $.Event(innerOptions.events[1]);
         var index = xgComboProp.getIndexByLiElement(target);
         event.args = {};
         event.args.index = index;
@@ -379,7 +413,7 @@ function xgCombo(element, options) {
 
         xgComboProp.comboinput[0].value = xgComboProp.getCheckedText();
 
-        var event = $.Event("checkChange");
+        var event = $.Event(innerOptions.events[2]);
         event.args = {};
 
         var index = xgComboProp.getIndexByLiElement(target);
@@ -397,8 +431,21 @@ function xgCombo(element, options) {
     xgComboProp.index = index;
   }
 
+  function _getEleByIndex(index){
+    var items = xgComboProp.comboitems;
+    return items.children().eq(index);
+  }
+
+  //selected된 엘리먼트에 클래스를 추가
+  function _addClassToSelectedItem(Ele){
+    if (xgComboProp.nowSelectedTarget != null) {
+      xgComboProp.nowSelectedTarget.removeClass("xg-combo-item-selected");
+    }
+    xgComboProp.nowSelectedTarget = Ele.addClass("xg-combo-item-selected");
+  }
+
   //내부에서 사용하는 함수 종료
-  addEvent();
+  _addEvent();
 
   element[0].xgComboProp = xgComboProp;
 
