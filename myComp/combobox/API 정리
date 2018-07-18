@@ -1,0 +1,213 @@
+1. option 정보
+
+  checkBoxes
+    용도     :  콤보 아이템에 checkBox를 표시할지를 결정한다.
+    default :   false
+
+  checkBoxWidth
+    용도     :  checkbox의 넓이를 저장해 둔다.
+                checkbox 생성 시 이 옵션 값을 아이템의 넓이에 추가한다
+    default :   20
+
+  valueParam
+    용도     :   콤보박스에 세팅된 Object 중에 value로 사용할 키 값이다
+    default  :   "value"
+
+  displayParam
+    용도     :   콤보박스에 세팅된 Object 중에 display로 사용할 키 값이다
+    default  :   "text"
+
+  multipleItem
+    용도     :   콤보박스 아이템에 여러 텍스트를 표시할지를 결정한다
+                 true로 설정해 놓으면 세팅된 Object의 값들을 모두 표시한다
+    default  :   false
+
+  multiItemTextOrder
+    용도     :   콤보박스의 아이템에 여러 텍스트를 표시할 시,
+                 표시되는 순서를 결정한다.
+                 null이 세팅되어 있으면 Object에 세팅된 키 값 순서대로 표시된다
+    default  :   null
+
+  triggerEvent
+    용도     :   'change', 'select', 'checkChange', 'listOpened', 'listClosed' 등의 이벤트를 일으킬지 결정한다
+    default  :   true
+
+  maxWidth : 추가 예정
+
+
+
+
+
+2. API
+ XgComboBox는 생성 시 Object를 리턴 받아서 해당 객체로 API를 호출한다.
+ 도는 XgComboBox를 생성하는데 사용된 DVI Element의 Propertiy에 "xgComboProp"키 값으로 접근할 수 있다.
+
+
+ setProp
+  property를 수정한다
+
+  인자 - 1. type : Object
+            property의 값을 저장한 변수.
+
+
+
+ createItems
+  콤보박스 아이템 리스트를 다시 생성한다.
+
+  인자 - 1. type : Array - [{text:"",value:""}]
+            콤보박스 아이템을 생성할 Array.
+
+
+
+
+ insertAt
+  콤보박스의 아이템 리스트에 아이템을 추가한다
+
+  인자 - 1. type : Object
+            아이템 정보를 담은 변수.
+         2. type : Number
+            아이템을 삽입할 index.
+           현재 세팅되어있는 아이템보다 높은 index를 지정하거나
+           지정하지 않으면 마지막에 아이템이 추가된다.
+
+
+
+
+updateAt
+  콤보박스의 아이템 중에서 특정 인덱스의 것을 수정한다
+
+  인자 - 1. type : Object
+            아이템 정보를 담은 변수.
+         2. type : number
+            수정될 아이템의 정보
+
+
+
+
+removeByValue
+  콤보박스의 아이템을 valueMember에 세팅된 값에 따라서 삭제한다
+
+  인자 - 1. type : String, Number
+            삭제할 valueMember 값
+
+
+
+
+removeAt
+  콤보박스의 아이템을 인덱스에 따라서 삭제한다
+
+  인자 - 1. type : Number
+          삭제할 인덱스 번호
+
+
+
+
+enableByValue
+  콤보박스의 아이템을 valueMember에 세팅된 값에 따라서 enable시킨다
+
+  인자 - 1. type : String, Number
+            enable할 valueMember 값
+
+
+
+
+enableAt
+  콤보박스의 아이템을 인덱스에 따라서 enable한다
+
+  인자 - 1. type : Number
+          enable할 인덱스 번호
+
+
+
+
+disableByValue
+  콤보박스의 아이템을 valueMember에 세팅된 값에 따라서 따라서 disable한다
+
+  인자 - 1. type : String, Number
+            disable할 valueMember 값
+
+
+
+
+disableAt
+  콤보박스의 아이템을 인덱스에 따라서 disable한다
+
+  인자 - 1. type : Number
+          disable할 인덱스 번호
+
+
+
+
+val
+  콤보박스의 값을 꺼내거나 세팅한다. 1번 인자를 넘기지 않으면 get, 넘기면 set이다
+
+  인자 - 1. type : String, Number
+          콤보박스에 세팅할 값
+
+
+
+setIndex
+  콤보박스의 값을 index로 세팅한다
+
+  인자 - 1. type : Number
+          값을 세팅할 번호
+
+
+
+
+getIndex
+  콤보박스의 현재 선택된 index를 가져온다
+
+  인자 -  없음
+
+
+
+
+getValueByIndex
+  값에 맞는 index를 반납한다
+
+  인자 - String, Number
+          valueMember에 세팅되어 있는 값.
+
+
+
+destroy
+  콤보박스를 제거한다
+
+  인자 - 없음
+
+
+
+
+
+
+
+
+
+
+
+3. 이벤트
+ 이벤트는 기반이 된 DIV 엘리먼트를 jQuery 객체로 만든 뒤, jQuery의 On 함수로 추가한다.
+ $("#combobox").on("change", function(evt){});
+ 이벤트의 함수에 넘어오는 event 객체에서 args 키 값 안에
+ 이벤트에 따라서 특정한 값들이 넘어온다
+
+ change
+  val, setIndex를 사용 할 때 이벤트가 일어난다
+  args - { oldIndex : 이전 인덱스 , newIndex : 변경 된 인덱스}
+
+ select
+  사용자가 직접 아이템을 클릭 했을 때 이벤트가 일어난다
+  args - {index:선택된 인덱스 , item: 선택된 Object}
+
+ checkChange
+  checkbox가 활성화 되어 있을 경우 체크를 변경 할 시 이벤트가 일어난다
+  args - {index : index, item : xgComboProp.source[index], checked : check}
+
+ listOpened
+  콤보박스의 아이템들이 표시될 때 이벤트가 일어난다
+  args - 없음
+
+ listClosed
+  콤보박스의 아이템들이 숨겨질 시 이벤트가 일어난다
+  args - 없음
