@@ -32,7 +32,19 @@ function xgCombo(element, options) {
     multiItemTextOrder : null,
     index : -1,
     indexes : [],
-    triggerEvent : true //val 함수로 set을 할 때 이벤트를 일으킬 지 정하는 옵션
+    triggerEvent : true, //val 함수로 set을 할 때 이벤트를 일으킬 지 정하는 옵션
+    getNomalItemHtml : function(nowSource){/*일반 콤보박스의 아이템 내부를 만드는 함수. 외부에서 함수를 수정해서 combobox 모양을 변경 가능    */
+      var displayParam = xgComboProp.displayParam;
+      return nowSource[displayParam];
+    },
+    getMultilItemHtml : function(nowSource){ /*멀티 콤보박스의 아이템 내부를 만드는 함수. 외부에서 함수를 수정해서 combobox 모양을 변경 가능   */
+      var text = "";
+      var order = xgComboProp.multiItemTextOrder == null ? Object.keys(nowSource) : xgComboProp.multiItemTextOrder;
+      for(var z = 0, len2 = order.length; z < len2; z++){
+        text += "<span class='xg-combo-item-span'>" + nowSource[order[z]] + "</span>";
+      }
+      return text;
+    }
   };
 
   var innerOptions = {
@@ -59,24 +71,6 @@ function xgCombo(element, options) {
 
   xgComboProp.setProp = function(options){
     _setProp(options);
-  }
-
-  /*일반 콤보박스의 아이템 내부를 만드는 함수. 외부에서 함수를 수정해서 combobox 모양을 변경 가능
-  */
-  xgComboProp.getNomalItemHtml = function(nowSource){
-    var displayParam = xgComboProp.displayParam;
-    return nowSource[displayParam];
-  }
-
-  /*멀티 콤보박스의 아이템 내부를 만드는 함수. 외부에서 함수를 수정해서 combobox 모양을 변경 가능
-  */
-  xgComboProp.getMultilItemHtml = function(nowSource){
-    var text = "";
-    var order = xgComboProp.multiItemTextOrder == null ? Object.keys(nowSource) : xgComboProp.multiItemTextOrder;
-    for(var z = 0, len2 = order.length; z < len2; z++){
-      text += "<span class='xg-combo-item-span'>" + nowSource[order[z]] + "</span>";
-    }
-    return text;
   }
 
   //콤보 리스트박스를 표시하는 함수
@@ -539,7 +533,7 @@ function xgCombo(element, options) {
   }
 
   function _checkSource(){
-    if(xgComboProp.source == null | xgComboProp.source.length == 0){
+    if(xgComboProp.source == null || xgComboProp.source.length == 0){
       return false;
     }
 
@@ -648,7 +642,7 @@ function xgCombo(element, options) {
     return result;
   }
 
-  function _setProp(){
+  function _setProp(options){
     var keys = Object.keys(options);
     for (var i = 0, len = keys.length; i < len; i++) {
       var key = keys[i];

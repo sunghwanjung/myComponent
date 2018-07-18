@@ -32,7 +32,11 @@ var combo1 = xgCombo($("#combobox1"),
 																  {text:"테스트3",value:3},
 																  {text:"테스트4",value:4},
 																  {text:"테스트5",value:5}
-																]}  );
+																],
+
+												getNomalItemHtml : function(source){
+													return "<bold>" +  source[this.displayParam] + "</bold>";
+												} } );
 var combo2 = xgCombo($("#combobox2"),
 											{source : [
 																	{text:"테스트1",value:"test1"},

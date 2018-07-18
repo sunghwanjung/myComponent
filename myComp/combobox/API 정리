@@ -85,10 +85,10 @@ updateAt
 
 
 removeByValue
-  콤보박스의 아이템을 valueMember에 세팅된 값에 따라서 삭제한다
+  콤보박스의 아이템을 valueParam에 세팅된 값에 따라서 삭제한다
 
   인자 - 1. type : String, Number
-            삭제할 valueMember 값
+            삭제할 valueParam 값
 
 
 
@@ -103,10 +103,10 @@ removeAt
 
 
 enableByValue
-  콤보박스의 아이템을 valueMember에 세팅된 값에 따라서 enable시킨다
+  콤보박스의 아이템을 valueParam에 세팅된 값에 따라서 enable시킨다
 
   인자 - 1. type : String, Number
-            enable할 valueMember 값
+            enable할 valueParam 값
 
 
 
@@ -121,10 +121,10 @@ enableAt
 
 
 disableByValue
-  콤보박스의 아이템을 valueMember에 세팅된 값에 따라서 따라서 disable한다
+  콤보박스의 아이템을 valueParam에 세팅된 값에 따라서 따라서 disable한다
 
   인자 - 1. type : String, Number
-            disable할 valueMember 값
+            disable할 valueParam 값
 
 
 
@@ -167,7 +167,7 @@ getValueByIndex
   값에 맞는 index를 반납한다
 
   인자 - String, Number
-          valueMember에 세팅되어 있는 값.
+          valueParam에 세팅되어 있는 값.
 
 
 
