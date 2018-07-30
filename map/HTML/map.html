@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="./map.css" >
+<script type="text/javascript" src="map.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.1.0.js"></script>
+<script type="text/javascript">
+  var jshMap
+  $(document).ready(function(){
+    var options = {
+      imgSrc : "image.JPG",
+      markList : {
+                  "1" : {left: "177px", top: "269px", text: "테스트1",
+                          createFunc:function(options){
+                            var append = "<div style='width:100px;height:70px;border:solid navy 5px;color:green;border-radius:5px;'> " + options.text + " </div>";
+                            return $(append);
+                          }},
+                  "2" : {left: "110px", top: "550px", text: "테스트2" },
+                  "3" : {left: "111px", top: "689px", text: "테스트3" },
+                  "4" : {left: "402px", top: "414px", text: "테스트4" },
+                  "5" : {left: "339px", top: "644px", text: "테스트5" }
+                },
+      _createMark : function(options){
+        var append = "<div style='width:70px;height:70px;border:solid red 5px;color:blue;'> " + options.text + " </div>";
+        return $(append);
+      },
+      canCreateMark : true,
+      markMove : true,
+      width: 800,
+      height: 400
+    }
+
+    jshMap = createhMap($("#map"), options);
+
+  });
+</script>
+</head>
+<body>
+<div id="map" style="margin-left:50px;"></div>
+</body>
+</html>

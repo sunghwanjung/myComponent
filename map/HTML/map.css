@@ -1,0 +1,17 @@
+.jshmap{
+	overflow: hidden;
+	-moz-user-select: -moz-none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.jshmap:active, .jshmap-middle-div:active, .jhmap-img:active{
+	cursor: move;
+}
+
+.jshmap-middle-div{
+	position:relative;
+	top : 0;
+	left : 0;
+}

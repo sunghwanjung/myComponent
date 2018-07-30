@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="./map.css" >
+<script type="text/javascript" src="map.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.1.0.js"></script>
+<script type="text/javascript">
+var ctx, jshMap, img;
+
+$(document).ready(function(){
+	var options = {
+		imgSrc : "image.JPG"
+	}
+	jshMap = createhMap($("#canvas"), options);
+	ctx = jshMap.canvasCtx;
+	img = new Image();
+	img.id="test";
+	img.src = "./mark.png";
+});
+
+function test(){
+
+	ctx.drawImage( img , 5, 5, 30, 30);
+}
+</script>
+</head>
+<body>
+	<div id="canvas">
+	</div>
+</body>
+</html>
